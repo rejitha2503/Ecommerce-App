@@ -1,0 +1,6 @@
+{
+  "name": "RFP",
+  "description": "A premium, production-ready Amazon-style full-stack e-commerce platform featuring Customer, Seller, and Admin dashboards, real-time cart, checkout, payments, AI recommendations, and interactive order tracking.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

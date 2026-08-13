@@ -1,0 +1,88 @@
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: font-sora, "Space Grotesk", sans-serif;
+  --font-mono: "Space Grotesk", monospace;
+  --font-sora: "Sora", sans-serif;
+  --font-space: "Space Grotesk", sans-serif;
+
+  /* Upgraded Brand Theme Color Palette */
+  --color-primary: #FF6B35;
+  --color-orange-brand: #FF6B35;
+  --color-secondary: #1A1A2E;
+  --color-navy-brand: #1A1A2E;
+  --color-accent: #E94560;
+  --color-success: #0FAA6F;
+  --color-bg-light: #F8F9FA;
+  --color-bg-dark: #0D0D1A;
+  --color-card-light: #FFFFFF;
+  --color-card-dark: #16213E;
+
+  /* Retain existing brand variables for compatibility */
+  --color-brand-primary: #FF6B35;
+  --color-brand-primary-light: #1A1A2E;
+  --color-brand-accent: #febd69;
+  --color-brand-accent-hover: #f3a847;
+  --color-brand-teal: #0FAA6F;
+  --color-brand-teal-hover: #078a56;
+  --color-brand-dark-bg: #0D0D1A;
+  --color-brand-dark-card: #16213E;
+  --color-brand-dark-border: rgba(255, 255, 255, 0.08);
+}
+
+/* Base style resets */
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Premium micro-animations & glassmorphism effects */
+.glass-panel-light {
+  background: rgba(255, 255, 255, 0.70);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.glass-panel-dark {
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Glow effects */
+.hover-glow {
+  transition: all 0.3s ease;
+}
+.hover-glow:hover {
+  box-shadow: 0 0 20px rgba(79, 70, 229, 0.25);
+  transform: translateY(-1px);
+}
+
+/* Skeleton Loading Shine */
+@keyframes shimmer-glow {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  transform: translateX(-100%);
+  background-image: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.2) 20%,
+    rgba(255, 255, 255, 0.5) 60%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  animation: shimmer-glow 2s infinite;
+}
