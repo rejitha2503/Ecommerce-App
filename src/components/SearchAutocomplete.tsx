@@ -158,7 +158,13 @@ export default function SearchAutocomplete({
                     <div className="flex items-center gap-3 min-w-0 flex-1">
                       {/* Product Thumbnail frame */}
                       <div className="w-10 h-10 rounded-lg bg-slate-50 dark:bg-slate-950 p-1 flex items-center justify-center shrink-0 border border-slate-200/50 dark:border-slate-800">
-                        <img src={p.images[0]} alt="" className="max-h-full object-contain" />
+                        <img 
+                          src={p.images?.[0] || "https://images.unsplash.com/photo-1542291026-7eec264c27ff"} 
+                          onError={(e) => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1542291026-7eec264c27ff"; }}
+                          alt="" 
+                          className="max-h-full max-w-full object-contain" 
+                          referrerPolicy="no-referrer"
+                        />
                       </div>
 
                       {/* Info details */}

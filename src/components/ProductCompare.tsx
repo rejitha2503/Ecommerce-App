@@ -11,6 +11,21 @@ interface ProductCompareProps {
   themeMode: 'LIGHT' | 'DARK';
 }
 
+const CATEGORY_FALLBACKS: Record<string, string> = {
+  "Women's Fashion": "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=600&q=80",
+  "Men's Fashion": "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=600&q=80",
+  "Footwear": "https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=600&q=80",
+  "Electronics": "https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?auto=format&fit=crop&w=600&q=80",
+  "Books": "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=600&q=80",
+  "Gaming": "https://images.unsplash.com/photo-1600861195091-690c92f1d2cc?auto=format&fit=crop&w=600&q=80",
+  "Kids": "https://images.unsplash.com/photo-1530325857957-4fa03c70333a?auto=format&fit=crop&w=600&q=80",
+  "Kids Section": "https://images.unsplash.com/photo-1530325857957-4fa03c70333a?auto=format&fit=crop&w=600&q=80",
+  "Beauty": "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=600&q=80",
+  "Beauty & Care": "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=600&q=80",
+  "Home & Kitchen": "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=600&q=80",
+  "Sports & Fitness": "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=600&q=80"
+};
+
 export default function ProductCompare({
   compareList,
   onRemoveFromCompare,
@@ -72,7 +87,13 @@ export default function ProductCompare({
         <div className="flex items-center gap-2 max-w-full overflow-x-auto py-1">
           {compareList.map(p => (
             <div key={p.id} className="relative group shrink-0 bg-slate-950 p-1.5 rounded-xl border border-slate-800/80">
-              <img src={p.images[0]} alt={p.title} className="w-8 h-8 object-contain" />
+              <img 
+                src={p.images?.[0] || CATEGORY_FALLBACKS[p.category] || "https://images.unsplash.com/photo-1542291026-7eec264c27ff"} 
+                onError={(e) => { (e.target as HTMLImageElement).src = CATEGORY_FALLBACKS[p.category] || "https://images.unsplash.com/photo-1542291026-7eec264c27ff"; }}
+                alt={p.title} 
+                className="w-8 h-8 object-contain" 
+                referrerPolicy="no-referrer"
+              />
               <button
                 onClick={() => onRemoveFromCompare(p)}
                 className="absolute -top-1 -right-1 bg-rose-600 text-white p-0.5 rounded-full hover:bg-rose-700 shadow transition-transform transform scale-75 group-hover:scale-90"
@@ -174,7 +195,13 @@ export default function ProductCompare({
                         <div className="space-y-4">
                           {/* Image box rounded */}
                           <div className="h-32 bg-slate-50 dark:bg-slate-950/60 p-2 rounded-xl flex items-center justify-center">
-                            <img src={p.images[0]} alt={p.title} className="max-h-full object-contain" />
+                            <img 
+                              src={p.images?.[0] || CATEGORY_FALLBACKS[p.category] || "https://images.unsplash.com/photo-1542291026-7eec264c27ff"} 
+                              onError={(e) => { (e.target as HTMLImageElement).src = CATEGORY_FALLBACKS[p.category] || "https://images.unsplash.com/photo-1542291026-7eec264c27ff"; }}
+                              alt={p.title} 
+                              className="max-h-full object-contain" 
+                              referrerPolicy="no-referrer"
+                            />
                           </div>
 
                           <div className="space-y-1">

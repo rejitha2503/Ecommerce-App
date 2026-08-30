@@ -1087,10 +1087,11 @@ export default function CheckoutModal({
               {cartItems.map((it, idx) => (
                 <div key={it.id || idx} className="flex gap-3 items-center pt-2.5 first:pt-0">
                   <img
-                    src={it.product.images[0]}
+                    src={it.product.images?.[0] || "https://images.unsplash.com/photo-1542291026-7eec264c27ff"}
+                    onError={(e) => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1542291026-7eec264c27ff"; }}
                     alt={it.product.title}
                     referrerPolicy="no-referrer"
-                    className={`w-9 h-9 rounded-lg object-cover border shrink-0 bg-white ${
+                    className={`w-10 h-10 rounded-lg object-contain p-0.5 border shrink-0 bg-white ${
                       isDark ? 'border-slate-800' : 'border-gray-200'
                     }`}
                   />

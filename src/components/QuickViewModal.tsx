@@ -12,6 +12,21 @@ interface QuickViewModalProps {
   themeMode: 'LIGHT' | 'DARK';
 }
 
+const CATEGORY_FALLBACKS: Record<string, string> = {
+  "Women's Fashion": "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=800&q=80",
+  "Men's Fashion": "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=800&q=80",
+  "Footwear": "https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=800&q=80",
+  "Electronics": "https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?auto=format&fit=crop&w=800&q=80",
+  "Books": "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=800&q=80",
+  "Gaming": "https://images.unsplash.com/photo-1600861195091-690c92f1d2cc?auto=format&fit=crop&w=800&q=80",
+  "Kids": "https://images.unsplash.com/photo-1530325857957-4fa03c70333a?auto=format&fit=crop&w=800&q=80",
+  "Kids Section": "https://images.unsplash.com/photo-1530325857957-4fa03c70333a?auto=format&fit=crop&w=800&q=80",
+  "Beauty": "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=800&q=80",
+  "Beauty & Care": "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=800&q=80",
+  "Home & Kitchen": "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=800&q=80",
+  "Sports & Fitness": "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=800&q=80"
+};
+
 export default function QuickViewModal({
   product,
   onClose,
@@ -21,6 +36,8 @@ export default function QuickViewModal({
   themeMode
 }: QuickViewModalProps) {
   if (!product) return null;
+
+  const fallback = CATEGORY_FALLBACKS[product.category] || "https://images.unsplash.com/photo-1542291026-7eec264c27ff";
 
   const isDark = themeMode === 'DARK';
   const hasDiscount = product.originalPrice > product.price;
@@ -102,7 +119,7 @@ export default function QuickViewModal({
 
           {/* LEFT: Multi image viewer slides */}
           <div className="w-full md:w-1/2 p-6 flex flex-col justify-between bg-slate-50 dark:bg-slate-950/20 border-b md:border-b-0 md:border-r border-slate-100 dark:border-slate-850/60 shrink-0">
-            <div className="relative h-64 sm:h-72 w-full flex items-center justify-center">
+            <div className="relative h-64 sm:h-72 w-full flex items-center justify-center p-3">
               <AnimatePresence mode="wait">
                 <motion.img
                   key={activeImageIdx}
@@ -110,9 +127,10 @@ export default function QuickViewModal({
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.2 }}
-                  src={product.images[activeImageIdx] || product.images[0]}
+                  src={product.images[activeImageIdx] || product.images[0] || fallback}
+                  onError={(e) => { (e.target as HTMLImageElement).src = fallback; }}
                   alt={product.title}
-                  className="max-h-full object-contain cursor-zoom-in"
+                  className="max-h-full max-w-full object-contain cursor-zoom-in animate-float-subtle"
                   referrerPolicy="no-referrer"
                 />
               </AnimatePresence>
@@ -132,13 +150,19 @@ export default function QuickViewModal({
                   <button
                     key={idx}
                     onClick={() => setActiveImageIdx(idx)}
-                    className={`w-12 h-12 rounded-xl p-1 bg-white border cursor-pointer overflow-hidden transition-all duration-300 shrink-0 ${
+                    className={`w-12 h-12 rounded-xl p-1 bg-white border cursor-pointer overflow-hidden transition-all duration-300 shrink-0 flex items-center justify-center ${
                       activeImageIdx === idx 
                         ? 'border-indigo-600 scale-105 shadow shadow-indigo-600/15' 
                         : 'border-slate-200 hover:border-slate-350 opacity-70 hover:opacity-100'
                     }`}
                   >
-                    <img src={img} alt="" className="w-full h-full object-contain" />
+                    <img 
+                      src={img} 
+                      onError={(e) => { (e.target as HTMLImageElement).src = fallback; }}
+                      alt="" 
+                      className="w-full h-full object-contain" 
+                      referrerPolicy="no-referrer"
+                    />
                   </button>
                 ))}
               </div>
@@ -290,7 +314,7 @@ export default function QuickViewModal({
                 <button
                   onClick={handleCartAdd}
                   disabled={isSuccessZoom}
-                  className="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white font-black py-3 px-5 rounded-2xl shadow-lg shadow-indigo-600/15 active:scale-98 transition flex items-center justify-center gap-2 uppercase tracking-widest text-[11px]"
+                  className="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white font-black py-3 px-5 rounded-2xl shadow-lg shadow-indigo-600/15 active:scale-98 transition-all flex items-center justify-center gap-2 uppercase tracking-widest text-[11px] btn-shimmer"
                 >
                   {isSuccessZoom ? (
                     <>

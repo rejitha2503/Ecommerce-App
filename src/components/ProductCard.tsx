@@ -92,18 +92,20 @@ export default function ProductCard({
     return (
       <motion.div
         layout
-        initial={{ opacity: 0, y: 15 }}
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
+        whileHover={{ y: -6, scale: 1.015 }}
+        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
         exit={{ opacity: 0 }}
-        className={`flex flex-col sm:flex-row gap-6 p-4 rounded-3xl border transition-all duration-300 ${
+        className={`card-lift-scale flex flex-col sm:flex-row gap-6 p-4 rounded-3xl border transition-all duration-400 ${
           isDark 
-            ? 'bg-slate-900/80 border-slate-800 hover:border-slate-700 hover:shadow-xl hover:shadow-indigo-950/20' 
-            : 'bg-white border-slate-100 hover:border-slate-200 hover:shadow-xl hover:shadow-slate-100/40'
+            ? 'bg-slate-900/85 border-slate-800 hover:border-slate-700 hover:shadow-2xl hover:shadow-indigo-950/30' 
+            : 'bg-white border-slate-100 hover:border-slate-200 hover:shadow-2xl hover:shadow-slate-200/50'
         }`}
       >
         {/* Left image holder */}
         <div 
-          className={`relative w-full sm:w-56 h-44 rounded-2xl overflow-hidden cursor-pointer flex-shrink-0 flex items-center justify-center p-3 ${
+          className={`relative w-full sm:w-56 h-44 rounded-2xl overflow-hidden cursor-pointer flex-shrink-0 flex items-center justify-center p-3 group/img ${
             isDark ? 'bg-slate-950/60' : 'bg-slate-50'
           }`}
           onClick={() => onSelectProduct(product.id)}
@@ -112,13 +114,13 @@ export default function ProductCard({
             src={imgSrc} 
             onError={handleImgError}
             alt={product.title} 
-            className="h-full object-contain hover:scale-105 transition-transform duration-500"
+            className="h-full object-contain animate-float-subtle group-hover/img:scale-110 transition-transform duration-500 select-none"
             referrerPolicy="no-referrer"
           />
           
           {/* Discount badge */}
           {hasDiscount && (
-            <span className="absolute top-2.5 left-2.5 bg-rose-600 text-white text-[10px] font-black tracking-wider px-2 py-0.5 rounded-full shadow-sm">
+            <span className="absolute top-2.5 left-2.5 bg-rose-600 text-white text-[10px] font-black tracking-wider px-2.5 py-0.5 rounded-full shadow-md animate-pulse">
               {discountPercent}% OFF
             </span>
           )}
@@ -127,7 +129,7 @@ export default function ProductCard({
           <div className="absolute top-2.5 right-2.5 flex flex-col gap-1.5 opacity-0 group-hover:opacity-100 sm:opacity-100 transition-opacity">
             <button
               onClick={handleWishlistClick}
-              className={`p-2 rounded-full shadow-md transition-colors ${
+              className={`p-2 rounded-full shadow-md btn-shimmer transition-colors ${
                 isInWishlist 
                   ? 'bg-rose-500 text-white' 
                   : (isDark ? 'bg-slate-900/90 text-slate-400 hover:text-rose-400' : 'bg-white text-slate-500 hover:text-rose-500')
@@ -262,19 +264,21 @@ export default function ProductCard({
   return (
     <motion.div
       layout
-      initial={{ opacity: 0, scale: 0.98 }}
-      animate={{ opacity: 1, scale: 1 }}
+      initial={{ opacity: 0, scale: 0.98, y: 15 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      whileHover={{ y: -8, scale: 1.025 }}
+      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
       exit={{ opacity: 0, scale: 0.98 }}
-      className={`group relative rounded-3xl border overflow-hidden flex flex-col justify-between transition-all duration-300 ${
+      className={`card-lift-scale group relative rounded-3xl border overflow-hidden flex flex-col justify-between transition-all duration-400 ${
         isDark 
-          ? 'bg-slate-900/80 border-slate-850/80 hover:border-slate-750 hover:shadow-2xl hover:shadow-indigo-950/20' 
-          : 'bg-white border-gray-100 hover:border-indigo-100 hover:shadow-2xl hover:shadow-slate-100/50'
+          ? 'bg-slate-900/85 border-slate-850/80 hover:border-slate-700 hover:shadow-2xl hover:shadow-indigo-950/30' 
+          : 'bg-white border-gray-100 hover:border-indigo-100 hover:shadow-2xl hover:shadow-slate-200/60'
       }`}
     >
       {/* Product Image Frame */}
       <div 
-        className={`relative h-[220px] overflow-hidden flex items-center justify-center p-4 cursor-pointer select-none ${
-          isDark ? 'bg-slate-950/40' : 'bg-slate-50/50'
+        className={`relative h-[230px] overflow-hidden flex items-center justify-center p-4 cursor-pointer select-none group/img ${
+          isDark ? 'bg-slate-950/40' : 'bg-slate-50/60'
         }`}
         onClick={() => onSelectProduct(product.id)}
       >
@@ -282,24 +286,24 @@ export default function ProductCard({
           src={imgSrc}
           onError={handleImgError}
           alt={product.title}
-          className="h-full object-contain transform group-hover:scale-106 transition-transform duration-500 select-none"
+          className="h-full object-contain animate-float-subtle group-hover:scale-110 transition-transform duration-500 select-none"
           referrerPolicy="no-referrer"
         />
 
         {/* Top left discount or flash badges */}
         <div className="absolute top-3 left-3 flex flex-col gap-1 z-10">
           {product.isFlashSale && (
-            <span className="bg-red-600 text-white font-black px-2 py-0.5 rounded uppercase tracking-widest text-[8px] shadow-sm">
+            <span className="bg-red-600 text-white font-black px-2.5 py-0.5 rounded-full uppercase tracking-widest text-[8px] shadow-sm animate-pulse">
               ⚡ Flash Deal
             </span>
           )}
           {product.isTrending && (
-            <span className="bg-indigo-600 text-white font-black px-2 py-0.5 rounded uppercase tracking-widest text-[8px] shadow-sm">
-              🔥 HOT
+            <span className="bg-[#FF6B35] text-white font-black px-2.5 py-0.5 rounded-full uppercase tracking-widest text-[8px] shadow-sm">
+              🔥 Runway Hot
             </span>
           )}
           {product.stock <= 3 && (
-            <span className="bg-indigo-600 text-white font-black px-2 py-0.5 rounded uppercase tracking-widest text-[8px] shadow-sm">
+            <span className="bg-amber-600 text-white font-black px-2.5 py-0.5 rounded-full uppercase tracking-widest text-[8px] shadow-sm">
               {product.stock} Left!
             </span>
           )}
@@ -309,7 +313,7 @@ export default function ProductCard({
         <button
           id={`btn-overlay-wish-${product.id}`}
           onClick={handleWishlistClick}
-          className={`absolute top-3 right-3 p-2 rounded-full shadow-lg border backdrop-blur-md transition-all duration-300 transform scale-90 group-hover:scale-100 cursor-pointer ${
+          className={`absolute top-3 right-3 p-2 rounded-full shadow-lg border backdrop-blur-md btn-shimmer transition-all duration-300 transform scale-90 group-hover:scale-100 cursor-pointer ${
             isInWishlist 
               ? 'bg-rose-500 border-rose-500 text-white' 
               : (isDark 
@@ -322,10 +326,10 @@ export default function ProductCard({
         </button>
 
         {/* Hover Action Overlay Toolbar */}
-        <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-slate-950/80 via-slate-950/40 to-transparent flex justify-center items-center gap-2 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300 z-10 backdrop-blur-[1px]">
+        <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-slate-950/85 via-slate-950/40 to-transparent flex justify-center items-center gap-2 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300 z-10 backdrop-blur-[2px]">
           <button
             onClick={handleQuickViewClick}
-            className="flex items-center gap-1 bg-white hover:bg-indigo-600 hover:text-white text-slate-900 rounded-xl px-3 py-2 text-[10px] font-black uppercase tracking-wider shadow-md transition active:scale-95 cursor-pointer"
+            className="flex items-center gap-1.5 bg-white hover:bg-[#FF6B35] hover:text-white text-slate-900 rounded-xl px-3.5 py-2 text-[10px] font-black uppercase tracking-wider shadow-md btn-shimmer transition active:scale-95 cursor-pointer"
             title="Quick view product specs"
           >
             <Eye className="w-3.5 h-3.5" />
@@ -334,9 +338,9 @@ export default function ProductCard({
 
           <button
             onClick={handleCompareClick}
-            className={`p-2 rounded-xl shadow-md transition active:scale-95 cursor-pointer flex items-center justify-center ${
+            className={`p-2 rounded-xl shadow-md btn-shimmer transition active:scale-95 cursor-pointer flex items-center justify-center ${
               isCompared 
-                ? 'bg-indigo-600 text-white border border-indigo-600' 
+                ? 'bg-[#FF6B35] text-white border border-[#FF6B35]' 
                 : 'bg-slate-900/95 text-white border border-slate-700 hover:border-white'
             }`}
             title="Compare side by side"
@@ -361,7 +365,7 @@ export default function ProductCard({
           </div>
 
           {/* Category Display in Grid View */}
-          <span className="hover:underline cursor-pointer text-[10px] uppercase font-black tracking-wider text-indigo-600 dark:text-indigo-400 block pt-0.5" onClick={() => onSelectProduct(product.id)}>
+          <span className="hover:underline cursor-pointer text-[10px] uppercase font-black tracking-wider text-[#FF6B35] block pt-0.5" onClick={() => onSelectProduct(product.id)}>
             {product.category} • {product.subCategory}
           </span>
 
@@ -369,7 +373,7 @@ export default function ProductCard({
             id={`btn-view-prod-${product.id}`}
             onClick={() => onSelectProduct(product.id)}
             className={`font-black font-sora block text-sm leading-snug hover:underline cursor-pointer text-left truncate w-full pr-1 ${
-              isDark ? 'text-slate-100 hover:text-white' : 'text-slate-950 hover:text-indigo-600'
+              isDark ? 'text-slate-100 hover:text-white' : 'text-slate-950 hover:text-[#FF6B35]'
             }`}
             title={product.title}
           >
@@ -406,7 +410,7 @@ export default function ProductCard({
         <div className="flex items-center justify-between border-t border-slate-100/50 dark:border-slate-800/40 pt-3 text-left">
           <div>
             <span className={`font-black text-[15px] block font-mono leading-none ${
-              isDark ? 'text-indigo-400' : 'text-indigo-700'
+              isDark ? 'text-[#FF6B35]' : 'text-slate-900'
             }`}>
               ₹{product.price}
             </span>
@@ -420,10 +424,10 @@ export default function ProductCard({
           <button
             id={`btn-cart-sku-${product.id}`}
             onClick={handleCartClick}
-            className={`p-2.5 rounded-xl transition duration-200 cursor-pointer flex items-center justify-center border shadow-xs ${
+            className={`p-2.5 rounded-xl btn-shimmer transition duration-200 cursor-pointer flex items-center justify-center border shadow-xs ${
               isDark 
-                ? 'bg-slate-950 border-slate-800 text-indigo-400 hover:bg-indigo-650 hover:text-white hover:border-indigo-650' 
-                : 'bg-indigo-50 border-indigo-100 text-indigo-650 hover:bg-indigo-650 hover:text-white hover:border-indigo-650'
+                ? 'bg-slate-950 border-slate-800 text-[#FF6B35] hover:bg-[#FF6B35] hover:text-white hover:border-[#FF6B35]' 
+                : 'bg-orange-50 border-orange-100 text-[#FF6B35] hover:bg-[#FF6B35] hover:text-white hover:border-[#FF6B35]'
             }`}
             title="Add to Shopping Cart"
           >

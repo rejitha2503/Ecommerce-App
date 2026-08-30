@@ -1,6 +1,6 @@
 {
   "name": "RFP",
-  "description": "A premium, production-ready Amazon-style full-stack e-commerce platform featuring Customer, Seller, and Admin dashboards, real-time cart, checkout, payments, AI recommendations, and interactive order tracking.",
+  "description": "A modern premium luxury fashion e-commerce brand featuring cinematic hero animations, smooth floating product aesthetics, lift & scale interactive cards, dynamic curated runway lookbooks, real-time cart, size & color customizers, and seamless checkout.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

@@ -40,26 +40,111 @@ body {
 
 /* Premium micro-animations & glassmorphism effects */
 .glass-panel-light {
-  background: rgba(255, 255, 255, 0.70);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
 .glass-panel-dark {
-  background: rgba(15, 23, 42, 0.75);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(15, 23, 42, 0.80);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 /* Glow effects */
 .hover-glow {
-  transition: all 0.3s ease;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .hover-glow:hover {
-  box-shadow: 0 0 20px rgba(79, 70, 229, 0.25);
-  transform: translateY(-1px);
+  box-shadow: 0 0 24px rgba(255, 107, 53, 0.3);
+  transform: translateY(-2px);
+}
+
+/* Cinematic Slow Background Movement */
+@keyframes cinematic-movement {
+  0% {
+    transform: scale(1.02) translate(0%, 0%);
+  }
+  25% {
+    transform: scale(1.08) translate(-1.5%, -1%);
+  }
+  50% {
+    transform: scale(1.05) translate(1%, -1.5%);
+  }
+  75% {
+    transform: scale(1.1) translate(-1%, 1%);
+  }
+  100% {
+    transform: scale(1.02) translate(0%, 0%);
+  }
+}
+
+.animate-cinematic {
+  animation: cinematic-movement 24s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+/* Subtle Floating Animation for Product Images */
+@keyframes float-subtle {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-7px) rotate(0.5deg);
+  }
+}
+
+.animate-float-subtle {
+  animation: float-subtle 4.5s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-float-delayed {
+  animation: float-subtle 5.2s ease-in-out infinite 1.5s;
+  will-change: transform;
+}
+
+/* Smooth Product Card Lift & Scale */
+.card-lift-scale {
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.45s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
+}
+.card-lift-scale:hover {
+  transform: translateY(-8px) scale(1.025);
+  box-shadow: 0 22px 35px -8px rgba(0, 0, 0, 0.12), 0 10px 18px -6px rgba(0, 0, 0, 0.08);
+}
+
+/* Button Shimmer Sheen on Hover */
+.btn-shimmer {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.btn-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200%;
+  height: 100%;
+  transform: translateX(-150%) skewX(-20deg);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transition: transform 0.75s ease;
+}
+.btn-shimmer:hover::after {
+  transform: translateX(100%) skewX(-20deg);
+}
+.btn-shimmer:hover {
+  transform: translateY(-2px) scale(1.02);
+}
+.btn-shimmer:active {
+  transform: translateY(0px) scale(0.98);
 }
 
 /* Skeleton Loading Shine */

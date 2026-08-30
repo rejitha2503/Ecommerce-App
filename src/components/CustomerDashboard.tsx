@@ -336,9 +336,10 @@ export default function CustomerDashboard({ user, onNotify, onRefreshUser }: Cus
                     {o.items.map((item, idx) => (
                       <div key={idx} className="flex gap-4 items-center">
                         <img
-                          src={item.image}
+                          src={item.image || "https://images.unsplash.com/photo-1542291026-7eec264c27ff"}
+                          onError={(e) => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1542291026-7eec264c27ff"; }}
                           alt={item.title}
-                          className="w-10 h-10 rounded-lg object-cover bg-gray-50 shrink-0"
+                          className="w-10 h-10 rounded-lg object-contain p-0.5 border border-gray-200 bg-white shrink-0"
                           referrerPolicy="no-referrer"
                         />
                         <div className="flex-1 min-w-0">

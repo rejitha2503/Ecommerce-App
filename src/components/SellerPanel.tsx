@@ -541,9 +541,10 @@ export default function SellerPanel({ sellerUser, onNotify }: SellerPanelProps) 
               {products.map(p => (
                 <div key={p.id} className="bg-white p-4 rounded-xl border border-gray-100 flex gap-4 shadow-xs">
                   <img
-                    src={p.images[0]}
+                    src={p.images?.[0] || "https://images.unsplash.com/photo-1542291026-7eec264c27ff"}
+                    onError={(e) => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1542291026-7eec264c27ff"; }}
                     alt={p.title}
-                    className="w-20 h-20 rounded-lg object-cover bg-gray-50 border border-gray-100 shrink-0"
+                    className="w-20 h-20 rounded-lg object-contain p-1 bg-white border border-gray-100 shrink-0"
                     referrerPolicy="no-referrer"
                   />
                   <div className="flex-1 min-w-0 text-xs">

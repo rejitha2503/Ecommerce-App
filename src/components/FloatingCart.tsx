@@ -61,7 +61,13 @@ export default function FloatingCart({
               <div key={it.id} className="p-3 flex gap-3 group-item relative">
                 {/* Product thumbnail */}
                 <div className="w-12 h-12 bg-slate-50 dark:bg-slate-950 rounded-lg p-1 border dark:border-slate-800 flex items-center justify-center shrink-0">
-                  <img src={it.product.images[0]} alt="" className="max-h-full object-contain" />
+                  <img 
+                    src={it.product.images?.[0] || "https://images.unsplash.com/photo-1542291026-7eec264c27ff"} 
+                    onError={(e) => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1542291026-7eec264c27ff"; }}
+                    alt="" 
+                    className="max-h-full max-w-full object-contain" 
+                    referrerPolicy="no-referrer"
+                  />
                 </div>
 
                 {/* Meta text and details and quantity */}

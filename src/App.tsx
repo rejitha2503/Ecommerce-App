@@ -898,136 +898,180 @@ export default function App() {
         {activeDashboardMode === 'SHOP' && !selectedProductId && (
           <div className="space-y-6">
             
-            {/* HERO BANNER BLOCK INTROS WITH NEW CAROUSEL */}
-            <div className="relative rounded-3xl overflow-hidden shadow-2xl min-h-[260px] md:min-h-[340px] flex items-center">
+            {/* 1. HERO BANNER BLOCK: SLOW CINEMATIC BACKGROUND MOVEMENT & FASHION BRAND HIGHLIGHTS */}
+            <motion.section 
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+              className="relative rounded-3xl overflow-hidden shadow-2xl min-h-[320px] md:min-h-[420px] flex items-center border border-white/10"
+            >
               {/* Slides renderer */}
               {(() => {
                 const slides = [
                   {
-                    badge: "⚡ FLASH SALE - 60% OFF",
-                    title: "Premium Electronics & Gadgets",
-                    description: "MacBooks, iPhones, Gaming Gear & More. Enhance focus with noise cancelling headphones and elite computing workstations.",
-                    btnLabel: "Shop Electronics →",
-                    category: "Electronics",
-                    bgStyle: "linear-gradient(135deg, #FF6B35, #E94560)",
-                    image: "https://images.unsplash.com/photo-1468495244123-6c6c332eeece?auto=format&fit=crop&w=600&q=80"
-                  },
-                  {
-                    badge: "👗 NEW COLLECTION 2025",
-                    title: "Luxury Indian Fashion",
-                    description: "Banarasi Sarees, Designer Kurtis & More. Loom-collaborative partnerships with pure lightweight organic silk and zari wefts.",
-                    btnLabel: "Explore Fashion →",
+                    badge: "✨ HAUTE COUTURE 2026",
+                    subtitle: "ATELIER RUNWAY COLLECTION",
+                    title: "Bespoke Silks & Modern Elegance",
+                    description: "Handcrafted pure mulberry silks, intricate gold zari wefts, and sculptural silhouettes designed for visionary statement looks.",
+                    btnLabel: "Explore Runway →",
                     category: "Women's Fashion",
-                    bgStyle: "linear-gradient(135deg, #1A1A2E, #16213E)",
-                    image: "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=600&q=80"
+                    bgImage: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1600&q=85",
+                    image: "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=800&q=80",
+                    accentColor: "#FF6B35"
                   },
                   {
-                    badge: "📚 KNOWLEDGE SALE",
-                    title: "Books & Learning Products",
-                    description: "Programming, Fiction, Academic & More. Discover algorithmic guides and premium bound history editions.",
-                    btnLabel: "Browse Books →",
-                    category: "Books",
-                    bgStyle: "linear-gradient(135deg, #0FAA6F, #1A1A2E)",
-                    image: "https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=600&q=80"
+                    badge: "⚡ STREETWEAR ATELIER",
+                    subtitle: "CONTEMPORARY MENSWEAR",
+                    title: "Architectural Fits & Urban Luxury",
+                    description: "Minimalist Italian tailored jackets, heavyweight structured cottons, and avant-garde luxury outerwear crafted for the modern metropolitan.",
+                    btnLabel: "Shop Menswear →",
+                    category: "Men's Fashion",
+                    bgImage: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1600&q=85",
+                    image: "https://images.unsplash.com/photo-1488161628813-04466f872be2?auto=format&fit=crop&w=800&q=80",
+                    accentColor: "#6366F1"
+                  },
+                  {
+                    badge: "💎 CURATED ACCESSORIES & FOOTWEAR",
+                    subtitle: "LIMITED CRAFT EDITION",
+                    title: "Artisanal Leather & Statement Soles",
+                    description: "Precision-engineered luxury sneakers, vegetable-tanned leather essentials, and acoustic audio jewelry engineered to elevate everyday rituals.",
+                    btnLabel: "View Footwear →",
+                    category: "Footwear",
+                    bgImage: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&w=1600&q=85",
+                    image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=80",
+                    accentColor: "#0FAA6F"
                   }
                 ];
                 const activeSlide = slides[currentHeroSlide] || slides[0];
                 return (
-                  <div 
-                    style={{ background: activeSlide.bgStyle }}
-                    className="w-full h-full p-6 md:p-12 text-white transition-all duration-700 flex flex-col md:flex-row justify-between items-center gap-6"
-                  >
-                    <div className="max-w-xl space-y-4 z-10 text-left">
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold tracking-widest bg-amber-400 text-slate-950 uppercase">
-                        {activeSlide.badge}
-                      </span>
-                      <h1 className="text-2xl md:text-5xl font-black leading-tight tracking-tight font-sora text-white uppercase drop-shadow-sm">
-                        {activeSlide.title}
-                      </h1>
-                      <p className="text-xs md:text-sm text-slate-200 leading-relaxed font-sans max-w-lg">
-                        {activeSlide.description}
-                      </p>
-                      <div className="flex flex-wrap gap-3 pt-2">
-                        <button 
-                          id="btn-hero-deal"
-                          onClick={() => {
-                            setActiveCategory(activeSlide.category);
-                            setCurrentPage(1);
-                            document.getElementById('browse-explorer-section')?.scrollIntoView({ behavior: 'smooth' });
-                          }}
-                          className={`${
-                            activeSlide.category === "Women's Fashion" ? 'bg-[#FF6B35] hover:bg-[#ff804e] text-white' : 'bg-white text-slate-950 hover:bg-slate-100'
-                          } font-bold font-sora text-xs py-3 px-6 rounded-xl transition-all shadow-lg active:scale-95 cursor-pointer flex items-center gap-2`}
-                        >
-                          <span>{activeSlide.btnLabel}</span>
-                          <ArrowRight className="w-4 h-4" />
-                        </button>
+                  <div className="relative w-full h-full min-h-[320px] md:min-h-[420px] flex items-center overflow-hidden">
+                    {/* Slow Cinematic Moving Background Layer */}
+                    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                      <img 
+                        key={currentHeroSlide}
+                        src={activeSlide.bgImage} 
+                        alt="Cinematic Background" 
+                        className="w-full h-full object-cover animate-cinematic scale-105 filter brightness-[0.38] contrast-125 transition-all duration-1000"
+                        referrerPolicy="no-referrer"
+                      />
+                      {/* Luxury Editorial Gradient Overlays */}
+                      <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/80 to-transparent"></div>
+                      <div className="absolute inset-0 bg-radial from-transparent via-slate-950/40 to-slate-950/90"></div>
+                    </div>
 
-                        <button 
-                          onClick={() => {
-                            setActiveCategory("All");
-                            setCurrentPage(1);
-                            document.getElementById('browse-explorer-section')?.scrollIntoView({ behavior: 'smooth' });
-                          }}
-                          className="border border-white/20 hover:border-white/40 hover:bg-white/5 text-white font-semibold text-xs py-3 px-5 rounded-xl transition cursor-pointer"
+                    {/* Content Layer */}
+                    <div className="relative z-10 w-full p-6 sm:p-10 md:p-14 text-white flex flex-col md:flex-row justify-between items-center gap-8">
+                      <div className="max-w-xl space-y-4 text-left">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black tracking-widest bg-[#FF6B35] text-white uppercase shadow-md animate-pulse">
+                            {activeSlide.badge}
+                          </span>
+                          <span className="text-[10px] tracking-[0.2em] font-mono uppercase font-bold text-slate-300">
+                            {activeSlide.subtitle}
+                          </span>
+                        </div>
+                        
+                        <h1 className="text-2xl sm:text-4xl md:text-5xl font-black leading-tight tracking-tight font-sora text-white uppercase drop-shadow-md">
+                          {activeSlide.title}
+                        </h1>
+                        <p className="text-xs sm:text-sm text-slate-200 leading-relaxed font-sans max-w-lg">
+                          {activeSlide.description}
+                        </p>
+                        
+                        <div className="flex flex-wrap gap-3 pt-3">
+                          <button 
+                            id="btn-hero-deal"
+                            onClick={() => {
+                              setActiveCategory(activeSlide.category);
+                              setCurrentPage(1);
+                              document.getElementById('browse-explorer-section')?.scrollIntoView({ behavior: 'smooth' });
+                            }}
+                            className="bg-[#FF6B35] hover:bg-[#ff804e] text-white font-bold font-sora text-xs py-3.5 px-7 rounded-xl shadow-xl shadow-[#FF6B35]/25 active:scale-95 cursor-pointer flex items-center gap-2 btn-shimmer group"
+                          >
+                            <span>{activeSlide.btnLabel}</span>
+                            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                          </button>
+
+                          <button 
+                            onClick={() => {
+                              setActiveCategory("All");
+                              setCurrentPage(1);
+                              document.getElementById('browse-explorer-section')?.scrollIntoView({ behavior: 'smooth' });
+                            }}
+                            className="border border-white/30 hover:border-white/70 hover:bg-white/10 text-white font-semibold text-xs py-3.5 px-6 rounded-xl transition-all cursor-pointer backdrop-blur-sm btn-shimmer"
+                          >
+                            Explore Full Catalog
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Right Floating Garment Showcase */}
+                      <div className="relative w-48 h-48 sm:w-60 sm:h-60 md:w-72 md:h-72 shrink-0 flex items-center justify-center">
+                        <div className="absolute inset-0 bg-[#FF6B35]/15 rounded-full blur-3xl animate-pulse"></div>
+                        <div className="relative z-10 w-full h-full p-2 rounded-3xl bg-white/5 backdrop-blur-md border border-white/20 shadow-2xl card-lift-scale">
+                          <img 
+                            src={activeSlide.image} 
+                            alt="Runway Showcase" 
+                            className="w-full h-full object-cover rounded-2xl animate-float-subtle select-none shadow-inner" 
+                            referrerPolicy="no-referrer"
+                            onError={(e) => {
+                              (e.target as HTMLElement).style.display = 'none';
+                            }}
+                          />
+                          {/* Floating Luxury Tag Badge */}
+                          <div className="absolute -bottom-2 -left-2 bg-slate-950/90 text-white border border-white/20 px-3 py-1 rounded-full text-[9px] font-mono font-bold tracking-wider uppercase shadow-xl flex items-center gap-1.5 animate-float-delayed">
+                            <span className="w-2 h-2 rounded-full bg-[#FF6B35] animate-ping"></span>
+                            RUNWAY EXCLUSIVE
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Carousel controls indicators */}
+                      <div className="absolute bottom-4 left-6 md:left-14 flex items-center gap-2 z-20">
+                        {slides.map((_, idx) => (
+                          <button
+                            key={idx}
+                            onClick={() => setCurrentHeroSlide(idx)}
+                            className={`h-2.5 rounded-full transition-all duration-400 cursor-pointer ${
+                              currentHeroSlide === idx ? 'bg-[#FF6B35] w-8' : 'bg-white/30 hover:bg-white/60 w-2.5'
+                            }`}
+                            title={`Go to slide ${idx + 1}`}
+                          />
+                        ))}
+                      </div>
+
+                      {/* Left/Right manual slide buttons */}
+                      <div className="absolute right-4 bottom-4 sm:right-8 sm:bottom-6 flex items-center gap-2 z-20">
+                        <button
+                          onClick={() => setCurrentHeroSlide(prev => prev === 0 ? slides.length - 1 : prev - 1)}
+                          className="p-2 bg-black/40 hover:bg-black/70 border border-white/20 text-white rounded-xl transition-all text-xs active:scale-90 cursor-pointer font-bold backdrop-blur-md btn-shimmer"
+                          title="Previous Banner"
                         >
-                          Browse All Products
+                          ←
+                        </button>
+                        <button
+                          onClick={() => setCurrentHeroSlide(prev => (prev + 1) % slides.length)}
+                          className="p-2 bg-black/40 hover:bg-black/70 border border-white/20 text-white rounded-xl transition-all text-xs active:scale-90 cursor-pointer font-bold backdrop-blur-md btn-shimmer"
+                          title="Next Banner"
+                        >
+                          →
                         </button>
                       </div>
-                    </div>
-
-                    {/* Image/Icon right visualization */}
-                    <div className="relative w-48 h-48 md:w-64 md:h-64 shrink-0 flex items-center justify-center">
-                      <div className="absolute inset-0 bg-indigo-500/10 rounded-full blur-2xl animate-pulse"></div>
-                      <img 
-                        src={activeSlide.image} 
-                        alt="Hero Featured" 
-                        className="w-full h-full object-cover rounded-2xl shadow-2xl border border-white/10 relative z-10 hover:scale-105 transition-transform duration-500 select-none" 
-                        referrerPolicy="no-referrer"
-                        onError={(e) => {
-                          (e.target as HTMLElement).style.display = 'none';
-                        }}
-                      />
-                    </div>
-
-                    {/* Carousel controls indicators */}
-                    <div className="absolute bottom-4 left-6 md:left-12 flex items-center gap-2 z-20">
-                      {slides.map((_, idx) => (
-                        <button
-                          key={idx}
-                          onClick={() => setCurrentHeroSlide(idx)}
-                          className={`w-2.5 h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
-                            currentHeroSlide === idx ? 'bg-amber-400 w-8' : 'bg-white/30 hover:bg-white/50'
-                          }`}
-                          title={`Go to slide ${idx + 1}`}
-                        />
-                      ))}
-                    </div>
-
-                    {/* Left/Right manual slide buttons */}
-                    <div className="absolute right-4 bottom-4 flex items-center gap-1.5 z-20">
-                      <button
-                        onClick={() => setCurrentHeroSlide(prev => prev === 0 ? slides.length - 1 : prev - 1)}
-                        className="p-1 px-1.5 bg-white/10 hover:bg-white/25 border border-white/10 text-white rounded-lg transition-all text-xs active:scale-90 cursor-pointer font-bold"
-                        title="Previous Banner"
-                      >
-                        ←
-                      </button>
-                      <button
-                        onClick={() => setCurrentHeroSlide(prev => (prev + 1) % slides.length)}
-                        className="p-1 px-1.5 bg-white/10 hover:bg-white/25 border border-white/10 text-white rounded-lg transition-all text-xs active:scale-90 cursor-pointer font-bold"
-                        title="Next Banner"
-                      >
-                        →
-                      </button>
                     </div>
                   </div>
                 );
               })()}
-            </div>
+            </motion.section>
 
-            {/* CATEGORIES DETAILED GRID/SCROLL SECTION */}
-            <div className="space-y-4">
+            {/* 2. CATEGORIES DETAILED GRID/SCROLL SECTION WITH SCROLL REVEAL */}
+            <motion.section 
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+              className="space-y-4"
+            >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-gray-100 dark:border-slate-800/80 pb-2 gap-1">
                 <h2 className="text-sm font-extrabold font-sora tracking-wider text-slate-850 dark:text-slate-100 uppercase block">Shop By Category</h2>
                 <span className="text-[10px] md:text-xs text-indigo-600 dark:text-indigo-400 font-bold font-sans flex items-center gap-1">
@@ -1101,18 +1145,24 @@ export default function App() {
                   );
                 })}
               </div>
-            </div>
+            </motion.section>
 
-            {/* CURATED HOMEPAGE SECTIONS */}
+            {/* CURATED HOMEPAGE SECTIONS WITH SCROLL REVEAL ANIMATIONS */}
             {showCuratedSections && products.length > 0 && (
               <div className="space-y-10 pt-4">
                 {/* 1. FLASH DEALS SECTOR WITH LIVE COUNTDOWN TIMER */}
                 {flashSaleProducts.length > 0 && (
-                  <div className={`p-5 rounded-3xl border transition-all duration-300 ${
-                    themeMode === 'DARK' 
-                      ? 'bg-slate-950/40 border-red-950/40 shadow-xl shadow-red-950/5' 
-                      : 'bg-gradient-to-r from-red-50/20 via-indigo-50/5 to-transparent border-red-100 shadow-sm'
-                  }`}>
+                  <motion.section 
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-40px" }}
+                    transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+                    className={`p-5 rounded-3xl border transition-all duration-300 ${
+                      themeMode === 'DARK' 
+                        ? 'bg-slate-950/40 border-red-950/40 shadow-xl shadow-red-950/5' 
+                        : 'bg-gradient-to-r from-red-50/20 via-indigo-50/5 to-transparent border-red-100 shadow-sm'
+                    }`}
+                  >
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-red-100/10 mb-4">
                       <div className="flex items-center gap-2">
                         <div className="p-2 bg-red-500/15 rounded-xl text-red-500 animate-pulse">
@@ -1206,14 +1256,14 @@ export default function App() {
 
                     <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-none">
                       {flashSaleProducts.map(p => (
-                        <div key={p.id} className={`w-[210px] shrink-0 border rounded-2xl shadow-xs overflow-hidden flex flex-col justify-between group hover:shadow-md transition-all duration-300 ${
+                        <div key={p.id} className={`w-[210px] shrink-0 border rounded-2xl shadow-xs overflow-hidden flex flex-col justify-between group hover:shadow-md transition-all duration-300 card-lift-scale ${
                           themeMode === 'DARK' ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-red-50'
                         }`}>
                           <div 
-                            className="h-[130px] bg-slate-50 dark:bg-slate-950/60 relative flex items-center justify-center cursor-pointer select-none p-2" 
+                            className="h-[130px] bg-slate-50 dark:bg-slate-950/60 relative flex items-center justify-center cursor-pointer select-none p-2 overflow-hidden" 
                             onClick={() => setSelectedProductId(p.id)}
                           >
-                            <img src={p.images[0]} alt={p.title} className="w-full h-full object-contain group-hover:scale-105 transition-all duration-300" referrerPolicy="no-referrer" />
+                            <img src={p.images[0]} alt={p.title} className="w-full h-full object-contain group-hover:scale-108 transition-all duration-500 animate-float-subtle" referrerPolicy="no-referrer" />
                             <span className="absolute top-2 left-2 bg-red-600 text-white text-[8px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider">
                               SAVE ₹{p.originalPrice - p.price}
                             </span>
@@ -1236,7 +1286,7 @@ export default function App() {
                             <button
                               id={`btn-flash-cart-${p.id}`}
                               onClick={() => handleAddToCart(p, p.variants?.sizes?.[0] || 'Standard', p.variants?.colors?.[0] || 'Default')}
-                              className="w-full bg-slate-950 dark:bg-slate-800 hover:bg-red-600 dark:hover:bg-red-650 text-white font-bold py-2 rounded-xl text-[10px] uppercase tracking-wider transition-colors cursor-pointer font-sans shadow-sm"
+                              className="w-full bg-slate-950 dark:bg-slate-800 hover:bg-red-600 dark:hover:bg-red-650 text-white font-bold py-2 rounded-xl text-[10px] uppercase tracking-wider transition-all cursor-pointer font-sans shadow-sm btn-shimmer"
                             >
                               Add To Cart
                             </button>
@@ -1244,16 +1294,22 @@ export default function App() {
                         </div>
                       ))}
                     </div>
-                  </div>
+                  </motion.section>
                 )}
 
                 {/* 2. TRENDING PRODUCTS SECTOR */}
                 {trendingProducts.length > 0 && (
-                  <div className={`p-5 rounded-3xl border transition-all duration-300 ${
-                    themeMode === 'DARK' 
-                      ? 'bg-slate-950/40 border-purple-950/40 shadow-xl shadow-purple-950/5' 
-                      : 'bg-gradient-to-r from-purple-50/20 via-indigo-50/10 to-transparent border-purple-100 shadow-sm'
-                  }`}>
+                  <motion.section 
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-40px" }}
+                    transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+                    className={`p-5 rounded-3xl border transition-all duration-300 ${
+                      themeMode === 'DARK' 
+                        ? 'bg-slate-950/40 border-purple-950/40 shadow-xl shadow-purple-950/5' 
+                        : 'bg-gradient-to-r from-purple-50/20 via-indigo-50/10 to-transparent border-purple-100 shadow-sm'
+                    }`}
+                  >
                     <div className="flex items-center justify-between border-b border-purple-100/10 pb-3 mb-4">
                       <div className="flex items-center gap-2">
                         <div className="p-2 bg-purple-500/15 rounded-xl text-purple-500">
@@ -1272,11 +1328,11 @@ export default function App() {
 
                     <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-none font-sans">
                       {trendingProducts.map((p, idx) => (
-                        <div key={p.id} className={`w-[210px] shrink-0 border rounded-2xl shadow-xs overflow-hidden flex flex-col justify-between group hover:shadow-md transition-all duration-300 ${
+                        <div key={p.id} className={`w-[210px] shrink-0 border rounded-2xl shadow-xs overflow-hidden flex flex-col justify-between group hover:shadow-md transition-all duration-300 card-lift-scale ${
                           themeMode === 'DARK' ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-purple-100'
                         }`}>
-                          <div className="h-[130px] bg-slate-50 dark:bg-slate-950/40 relative flex items-center justify-center cursor-pointer select-none p-2" onClick={() => setSelectedProductId(p.id)}>
-                            <img src={p.images[0]} alt={p.title} className="w-full h-full object-contain group-hover:scale-105 transition-all duration-300" referrerPolicy="no-referrer" />
+                          <div className="h-[130px] bg-slate-50 dark:bg-slate-950/40 relative flex items-center justify-center cursor-pointer select-none p-2 overflow-hidden" onClick={() => setSelectedProductId(p.id)}>
+                            <img src={p.images[0]} alt={p.title} className="w-full h-full object-contain group-hover:scale-108 transition-all duration-500 animate-float-subtle" referrerPolicy="no-referrer" />
                             <span className="absolute top-2 left-2 bg-purple-600 text-white text-[8px] font-black px-2 py-0.5 rounded uppercase tracking-wider shadow-sm font-mono">
                               #{idx + 1} RANK
                             </span>
@@ -1295,7 +1351,7 @@ export default function App() {
                             <button
                               id={`btn-trend-cart-${p.id}`}
                               onClick={() => handleAddToCart(p, p.variants?.sizes?.[0] || 'Standard', p.variants?.colors?.[0] || 'Default')}
-                              className="w-full bg-slate-950 dark:bg-slate-800 hover:bg-purple-600 dark:hover:bg-purple-650 text-white font-bold py-2 rounded-xl text-[10px] uppercase tracking-wider transition-colors cursor-pointer"
+                              className="w-full bg-slate-950 dark:bg-slate-800 hover:bg-purple-600 dark:hover:bg-purple-650 text-white font-bold py-2 rounded-xl text-[10px] uppercase tracking-wider transition-all cursor-pointer btn-shimmer"
                             >
                               Add To Cart
                             </button>
@@ -1303,13 +1359,19 @@ export default function App() {
                         </div>
                       ))}
                     </div>
-                  </div>
+                  </motion.section>
                 )}
 
                 {/* 3. CO-CURATED SPECIAL BUNDLES (Frequently Bought Together) */}
-                <div className={`rounded-3xl p-6 md:p-8 border shadow-xl space-y-6 transition-all duration-300 ${
-                  themeMode === 'DARK' ? 'bg-slate-950 border-slate-800' : 'bg-slate-900 text-white border-slate-800'
-                }`}>
+                <motion.section 
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-40px" }}
+                  transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+                  className={`rounded-3xl p-6 md:p-8 border shadow-xl space-y-6 transition-all duration-300 ${
+                    themeMode === 'DARK' ? 'bg-slate-950 border-slate-800' : 'bg-slate-900 text-white border-slate-800'
+                  }`}
+                >
                   <div className="space-y-1">
                     <span className="text-indigo-400 font-bold text-xs tracking-widest font-mono uppercase flex items-center gap-1.5">
                       <Sparkles className="w-4 h-4 animate-spin" /> Frequently Bought Together
@@ -1359,7 +1421,7 @@ export default function App() {
                               });
                               triggerToast('Combo Added', 'Loaded Saree Heritage bundle to your cart with combined 15% discount.', 'success');
                             }}
-                            className="bg-indigo-600 hover:bg-indigo-500 font-bold text-[10.5px] uppercase tracking-wider py-2.5 px-4 rounded-xl transition cursor-pointer text-white shadow-md shadow-indigo-950/50"
+                            className="bg-indigo-600 hover:bg-indigo-500 font-bold text-[10.5px] uppercase tracking-wider py-2.5 px-4 rounded-xl transition cursor-pointer text-white shadow-md shadow-indigo-950/50 btn-shimmer"
                           >
                             Add Combo to Cart
                           </button>
@@ -1407,7 +1469,7 @@ export default function App() {
                               });
                               triggerToast('Combo Added', 'Loaded the High Performance Tech bundle with combined 15% discount.', 'success');
                             }}
-                            className="bg-amber-600 hover:bg-amber-500 font-bold text-[10.5px] uppercase tracking-wider py-2.5 px-4 rounded-xl transition cursor-pointer text-white shadow-md shadow-amber-955/45 font-sans"
+                            className="bg-amber-600 hover:bg-amber-500 font-bold text-[10.5px] uppercase tracking-wider py-2.5 px-4 rounded-xl transition cursor-pointer text-white shadow-md shadow-amber-955/45 font-sans btn-shimmer"
                           >
                             Add Combo to Cart
                           </button>
@@ -1415,12 +1477,18 @@ export default function App() {
                       </div>
                     )}
                   </div>
-                </div>
+                </motion.section>
 
                 {/* 4. BRANDS WE CARRY SECTION */}
-                <div className={`p-6 md:p-8 rounded-3xl border transition-all duration-300 ${
-                  themeMode === 'DARK' ? 'bg-slate-950/20 border-slate-800' : 'bg-slate-50/50 border-gray-150'
-                }`}>
+                <motion.section 
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-40px" }}
+                  transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+                  className={`p-6 md:p-8 rounded-3xl border transition-all duration-300 ${
+                    themeMode === 'DARK' ? 'bg-slate-950/20 border-slate-800' : 'bg-slate-50/50 border-gray-150'
+                  }`}
+                >
                   <div className="space-y-1 mb-5">
                     <span className="text-indigo-600 dark:text-indigo-400 font-bold text-xs tracking-widest font-mono uppercase">AUTHORIZED TRUST HUB</span>
                     <h2 className="text-lg font-black tracking-tight text-slate-900 dark:text-white uppercase font-sans">Brands We Carry</h2>
@@ -1437,7 +1505,7 @@ export default function App() {
                     ].map((brand, bIdx) => (
                       <div 
                         key={bIdx} 
-                        className={`p-4 rounded-2xl border text-center transition-all duration-205 hover:-translate-y-1 cursor-pointer select-none ${
+                        className={`p-4 rounded-2xl border text-center transition-all duration-205 hover:-translate-y-1 cursor-pointer select-none card-lift-scale ${
                           themeMode === 'DARK' 
                             ? 'bg-slate-900/60 border-slate-800 hover:border-slate-700 hover:bg-slate-850/80 text-white' 
                             : 'bg-white border-gray-200 hover:border-indigo-200 hover:bg-indigo-50/5 text-slate-800 hover:shadow-sm'
@@ -1454,10 +1522,16 @@ export default function App() {
                       </div>
                     ))}
                   </div>
-                </div>
+                </motion.section>
 
                 {/* 5. SPECIAL OFFERS PROMOPLAY BANNER */}
-                <div className="relative rounded-3xl overflow-hidden p-6 md:p-8 bg-gradient-to-r from-indigo-900 via-indigo-950 to-slate-950 text-white shadow-xl border border-indigo-900/20">
+                <motion.section 
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-40px" }}
+                  transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+                  className="relative rounded-3xl overflow-hidden p-6 md:p-8 bg-gradient-to-r from-indigo-900 via-indigo-950 to-slate-950 text-white shadow-xl border border-indigo-900/20"
+                >
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(99,102,241,0.15),transparent)] pointer-events-none"></div>
                   <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
                     <div className="space-y-2 text-left">
@@ -1479,7 +1553,7 @@ export default function App() {
                             navigator.clipboard.writeText("SAVE20");
                             triggerToast("Coupon Copied", "Voucher code 'SAVE20' is direct-linked to clipboard!", "success");
                           }}
-                          className="bg-white/10 hover:bg-white/20 px-3 py-1.5 text-[9px] font-bold rounded-lg transition uppercase tracking-wider cursor-pointer font-mono"
+                          className="bg-white/10 hover:bg-white/20 px-3 py-1.5 text-[9px] font-bold rounded-lg transition uppercase tracking-wider cursor-pointer font-mono btn-shimmer"
                         >
                           Copy
                         </button>
@@ -1495,22 +1569,28 @@ export default function App() {
                             navigator.clipboard.writeText("WELCOME10");
                             triggerToast("Coupon Copied", "Voucher code 'WELCOME10' is linked safely!", "success");
                           }}
-                          className="bg-white/10 hover:bg-white/20 px-3 py-1.5 text-[9px] font-bold rounded-lg transition uppercase tracking-wider cursor-pointer font-mono"
+                          className="bg-white/10 hover:bg-white/20 px-3 py-1.5 text-[9px] font-bold rounded-lg transition uppercase tracking-wider cursor-pointer font-mono btn-shimmer"
                         >
                           Copy
                         </button>
                       </div>
                     </div>
                   </div>
-                </div>
+                </motion.section>
 
-                {/* 4. BEST SELLERS SECTOR */}
+                {/* 6. BEST SELLERS SECTOR */}
                 {bestSellers.length > 0 && (
-                  <div className={`p-5 rounded-3xl border transition-all duration-300 ${
-                    themeMode === 'DARK' 
-                      ? 'bg-slate-950/40 border-amber-950/40 shadow-xl shadow-amber-950/5' 
-                      : 'bg-gradient-to-r from-amber-50/25 via-yellow-50/10 to-transparent border-amber-100 shadow-sm'
-                  }`}>
+                  <motion.section 
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-40px" }}
+                    transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+                    className={`p-5 rounded-3xl border transition-all duration-300 ${
+                      themeMode === 'DARK' 
+                        ? 'bg-slate-950/40 border-amber-950/40 shadow-xl shadow-amber-950/5' 
+                        : 'bg-gradient-to-r from-amber-50/25 via-yellow-50/10 to-transparent border-amber-100 shadow-sm'
+                    }`}
+                  >
                     <div className="flex items-center justify-between border-b border-amber-100/10 pb-3 mb-4">
                       <div className="flex items-center gap-2">
                         <div className="p-2 bg-amber-550/15 rounded-xl text-amber-500">
@@ -1529,11 +1609,11 @@ export default function App() {
 
                     <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-none font-sans">
                       {bestSellers.map(p => (
-                        <div key={p.id} className={`w-[210px] shrink-0 border rounded-2xl shadow-xs overflow-hidden flex flex-col justify-between transition hover:shadow-md duration-305 ${
+                        <div key={p.id} className={`w-[210px] shrink-0 border rounded-2xl shadow-xs overflow-hidden flex flex-col justify-between transition hover:shadow-md duration-305 card-lift-scale ${
                           themeMode === 'DARK' ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-amber-50'
                         }`}>
-                          <div className="h-[130px] bg-slate-50 dark:bg-slate-950/40 relative flex items-center justify-center cursor-pointer select-none p-2" onClick={() => setSelectedProductId(p.id)}>
-                            <img src={p.images[0]} alt={p.title} className="w-full h-full object-contain group-hover:scale-105 transition-all duration-300" referrerPolicy="no-referrer" />
+                          <div className="h-[130px] bg-slate-50 dark:bg-slate-950/40 relative flex items-center justify-center cursor-pointer select-none p-2 overflow-hidden" onClick={() => setSelectedProductId(p.id)}>
+                            <img src={p.images[0]} alt={p.title} className="w-full h-full object-contain group-hover:scale-108 transition-all duration-500 animate-float-subtle" referrerPolicy="no-referrer" />
                             <div className="absolute top-2 left-2 bg-gradient-to-r from-amber-405 to-yellow-500 text-slate-950 text-[8px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider flex items-center gap-1 shadow-xs">
                               <span>🥇 GOLD MEDAL</span>
                             </div>
@@ -1555,7 +1635,7 @@ export default function App() {
                             <button
                               id={`btn-best-cart-${p.id}`}
                               onClick={() => handleAddToCart(p, p.variants?.sizes?.[0] || 'Standard', p.variants?.colors?.[0] || 'Default')}
-                              className="w-full bg-slate-950 dark:bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-white font-bold py-2 rounded-xl text-[10px] uppercase tracking-wider transition-all cursor-pointer font-sans"
+                              className="w-full bg-slate-950 dark:bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-white font-bold py-2 rounded-xl text-[10px] uppercase tracking-wider transition-all cursor-pointer font-sans btn-shimmer"
                             >
                               Add To Cart
                             </button>
@@ -1563,29 +1643,35 @@ export default function App() {
                         </div>
                       ))}
                     </div>
-                  </div>
+                  </motion.section>
                 )}
 
-                {/* 5. RECOMMENDED FOR YOU */}
+                {/* 7. RECOMMENDED FOR YOU */}
                 {recommendedProducts.length > 0 && (
-                  <div className="space-y-3 font-sans">
+                  <motion.section 
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-40px" }}
+                    transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+                    className="space-y-3 font-sans"
+                  >
                     <div className="flex items-center gap-2">
                       <Sparkles className="w-5 h-5 text-purple-600" />
-                      <h2 className="text-lg font-black tracking-tight text-slate-900 uppercase font-sans">✨ Recommended For You</h2>
+                      <h2 className="text-lg font-black tracking-tight text-slate-900 dark:text-white uppercase font-sans">✨ Recommended For You</h2>
                     </div>
                     <div className="flex gap-4 overflow-x-auto pb-3 scrollbar-none">
                       {recommendedProducts.map(p => (
-                        <div key={p.id} className="w-[200px] shrink-0 bg-white border border-gray-100 rounded-2xl shadow-xs overflow-hidden flex flex-col transition hover:shadow-md">
-                          <div className="h-[120px] bg-gray-50 relative flex items-center justify-center cursor-pointer select-none" onClick={() => setSelectedProductId(p.id)}>
-                            <img src={p.images[0]} alt={p.title} className="w-full h-full object-contain" referrerPolicy="no-referrer" />
+                        <div key={p.id} className="w-[200px] shrink-0 bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-2xl shadow-xs overflow-hidden flex flex-col transition hover:shadow-md card-lift-scale">
+                          <div className="h-[120px] bg-gray-50 dark:bg-slate-950/40 relative flex items-center justify-center cursor-pointer select-none overflow-hidden" onClick={() => setSelectedProductId(p.id)}>
+                            <img src={p.images[0]} alt={p.title} className="w-full h-full object-contain group-hover:scale-108 transition-all duration-500 animate-float-subtle" referrerPolicy="no-referrer" />
                           </div>
                           <div className="p-3 flex-1 flex flex-col justify-between text-xs space-y-2">
                             <div>
                               <span className="font-mono text-[8px] uppercase text-slate-400 block truncate font-bold">{p.brand}</span>
-                              <button onClick={() => setSelectedProductId(p.id)} className="font-bold text-gray-900 block mt-0.5 truncate text-left w-full hover:underline">{p.title}</button>
+                              <button onClick={() => setSelectedProductId(p.id)} className="font-bold text-gray-900 dark:text-white block mt-0.5 truncate text-left w-full hover:underline">{p.title}</button>
                             </div>
                             <div className="flex items-center justify-between">
-                              <span className="font-extrabold text-slate-900 font-mono">₹{p.price}</span>
+                              <span className="font-extrabold text-slate-900 dark:text-slate-100 font-mono">₹{p.price}</span>
                               <div className="flex items-center text-[10.5px] text-amber-500 font-bold gap-0.5 font-sans">
                                 <Star className="w-3 h-3 fill-amber-500 text-amber-500 animate-pulse" /> {p.rating}
                               </div>
@@ -1593,7 +1679,7 @@ export default function App() {
                             <button
                               id={`btn-recom-cart-${p.id}`}
                               onClick={() => handleAddToCart(p, p.variants?.sizes?.[0] || 'Standard', p.variants?.colors?.[0] || 'Default')}
-                              className="w-full bg-slate-900 hover:bg-slate-850 text-white font-bold py-1.5 rounded-lg text-[10px] transition cursor-pointer"
+                              className="w-full bg-slate-900 hover:bg-[#FF6B35] text-white font-bold py-1.5 rounded-lg text-[10px] transition cursor-pointer btn-shimmer"
                             >
                               Add To Cart
                             </button>
@@ -1601,16 +1687,22 @@ export default function App() {
                         </div>
                       ))}
                     </div>
-                  </div>
+                  </motion.section>
                 )}
 
-                {/* 6. NEW ARRIVALS */}
+                {/* 8. NEW ARRIVALS */}
                 {newArrivals.length > 0 && (
-                  <div className={`p-5 rounded-3xl border transition-all duration-300 ${
-                    themeMode === 'DARK' 
-                      ? 'bg-slate-950/40 border-emerald-950/40 shadow-xl shadow-emerald-950/5' 
-                      : 'bg-gradient-to-r from-emerald-50/20 to-transparent border-emerald-100 shadow-sm'
-                  }`}>
+                  <motion.section 
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-40px" }}
+                    transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+                    className={`p-5 rounded-3xl border transition-all duration-300 ${
+                      themeMode === 'DARK' 
+                        ? 'bg-slate-950/40 border-emerald-950/40 shadow-xl shadow-emerald-950/5' 
+                        : 'bg-gradient-to-r from-emerald-50/20 to-transparent border-emerald-100 shadow-sm'
+                    }`}
+                  >
                     <div className="flex items-center justify-between border-b border-emerald-100/10 pb-3 mb-4">
                       <div className="flex items-center gap-2">
                         <div className="p-2 bg-emerald-500/15 rounded-xl text-emerald-500">
@@ -1629,11 +1721,11 @@ export default function App() {
 
                     <div className="flex gap-4 overflow-x-auto pb-3 scrollbar-none font-sans">
                       {newArrivals.map(p => (
-                        <div key={p.id} className={`w-[210px] shrink-0 border rounded-2xl shadow-xs overflow-hidden flex flex-col justify-between group hover:shadow-md transition-all duration-300 ${
+                        <div key={p.id} className={`w-[210px] shrink-0 border rounded-2xl shadow-xs overflow-hidden flex flex-col justify-between group hover:shadow-md transition-all duration-300 card-lift-scale ${
                           themeMode === 'DARK' ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-emerald-100'
                         }`}>
-                          <div className="h-[130px] bg-slate-50 dark:bg-slate-950/40 relative flex items-center justify-center cursor-pointer select-none p-2 animate-fade-in" onClick={() => setSelectedProductId(p.id)}>
-                            <img src={p.images[0]} alt={p.title} className="w-full h-full object-contain group-hover:scale-105 transition-all duration-300" referrerPolicy="no-referrer" />
+                          <div className="h-[130px] bg-slate-50 dark:bg-slate-950/40 relative flex items-center justify-center cursor-pointer select-none p-2 animate-fade-in overflow-hidden" onClick={() => setSelectedProductId(p.id)}>
+                            <img src={p.images[0]} alt={p.title} className="w-full h-full object-contain group-hover:scale-108 transition-all duration-500 animate-float-subtle" referrerPolicy="no-referrer" />
                             <span className="absolute top-2 left-2 bg-emerald-600 text-white text-[8px] font-black px-2 py-0.5 rounded uppercase tracking-wider shadow-sm font-mono">
                               JUST IN
                             </span>
@@ -1651,7 +1743,7 @@ export default function App() {
                             <button
                               id={`btn-new-cart-${p.id}`}
                               onClick={() => handleAddToCart(p, p.variants?.sizes?.[0] || 'Standard', p.variants?.colors?.[0] || 'Default')}
-                              className="w-full bg-slate-950 dark:bg-slate-800 hover:bg-emerald-650 text-white font-bold py-2 rounded-xl text-[10px] uppercase tracking-wider transition-all cursor-pointer font-sans"
+                              className="w-full bg-slate-950 dark:bg-slate-800 hover:bg-emerald-650 text-white font-bold py-2 rounded-xl text-[10px] uppercase tracking-wider transition-all cursor-pointer font-sans btn-shimmer"
                             >
                               Add To Cart
                             </button>
@@ -1659,14 +1751,20 @@ export default function App() {
                         </div>
                       ))}
                     </div>
-                  </div>
+                  </motion.section>
                 )}
 
-                {/* 7. RECENTLY VIEWED ROW */}
+                {/* 9. RECENTLY VIEWED ROW */}
                 {recentlyViewedProducts.length > 0 && (
-                  <div className={`p-5 rounded-3xl border transition-all duration-300 font-sans ${
-                    themeMode === 'DARK' ? 'bg-slate-950/20 border-slate-800' : 'bg-slate-50/50 border-gray-150'
-                  }`}>
+                  <motion.section 
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-40px" }}
+                    transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+                    className={`p-5 rounded-3xl border transition-all duration-300 font-sans ${
+                      themeMode === 'DARK' ? 'bg-slate-950/20 border-slate-800' : 'bg-slate-50/50 border-gray-150'
+                    }`}
+                  >
                     <div className="flex items-center justify-between border-b border-gray-100 dark:border-slate-800/10 pb-3 mb-4">
                       <div className="flex items-center gap-2">
                         <div className="p-2 bg-indigo-500/10 rounded-xl text-indigo-500">
@@ -1690,14 +1788,14 @@ export default function App() {
 
                     <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-none">
                       {recentlyViewedProducts.map(p => (
-                        <div key={p.id} className="w-[150px] shrink-0 flex flex-col space-y-2 text-[11.5px] group">
+                        <div key={p.id} className="w-[150px] shrink-0 flex flex-col space-y-2 text-[11.5px] group card-lift-scale">
                           <div 
                             className={`h-[110px] rounded-xl flex items-center justify-center border p-1.5 cursor-pointer relative overflow-hidden transition-all duration-300 group-hover:scale-[1.03] ${
                               themeMode === 'DARK' ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-100'
                             }`}
                             onClick={() => setSelectedProductId(p.id)}
                           >
-                            <img src={p.images[0]} alt={p.title} className="w-full h-full object-contain animate-fade-in" referrerPolicy="no-referrer" />
+                            <img src={p.images[0]} alt={p.title} className="w-full h-full object-contain animate-fade-in animate-float-subtle" referrerPolicy="no-referrer" />
                           </div>
                           <div>
                             <button onClick={() => setSelectedProductId(p.id)} className="font-bold text-slate-900 dark:text-slate-100 block text-left leading-none truncate w-full hover:underline font-sora text-[11px]">{p.title}</button>
@@ -1706,13 +1804,20 @@ export default function App() {
                         </div>
                       ))}
                     </div>
-                  </div>
+                  </motion.section>
                 )}
               </div>
             )}
 
             {/* BROWSE ALL PRODUCTS CATALOG ROW HEADER */}
-            <div className="border-t border-gray-150 pt-8" id="browse-explorer-section">
+            <motion.section 
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+              className="border-t border-gray-150 pt-8" 
+              id="browse-explorer-section"
+            >
               {(() => {
                 // Compile unique available brands dynamically from matching products list
                 const availableBrands = Array.from(new Set(products.map(p => p.brand)));
@@ -2022,7 +2127,7 @@ export default function App() {
                   </div>
                 );
               })()}
-            </div>
+            </motion.section>
           </div>
         )}
 

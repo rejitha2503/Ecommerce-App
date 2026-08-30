@@ -5,8 +5,11 @@ import { generateShopSphereSeed } from './seedGenerator';
 
 const STORE_PATH = path.join(process.cwd(), 'db.json');
 
+export const SEED_VERSION = 'v5_audited_consistent_catalog';
+
 // Memory DB representation
 export interface DBStore {
+  version?: string;
   users: User[];
   passwords: Record<string, string>; // userId -> hashedPW (or simple PW)
   addresses: Address[];
@@ -458,6 +461,7 @@ class DatabaseConnection {
 
   constructor() {
     this.data = {
+      version: SEED_VERSION,
       users: DEFAULT_USERS,
       passwords: {
         'user-cust-1': 'customer123',
@@ -472,17 +476,18 @@ class DatabaseConnection {
       sellers: DEFAULT_SELLERS
     };
     this.load();
-    if (this.data.products.length < 1005) {
-      console.log("[ShopSphere DB] Auditing product catalog. Regenerating fresh database with 1000+ certified premium items...");
+    if (this.data.version !== SEED_VERSION || this.data.products.length < 1005) {
+      console.log("[ShopSphere DB] Auditing product catalog. Regenerating fresh database with 1000+ verified category-pure items...");
       try {
         const seeded = generateShopSphereSeed();
+        this.data.version = SEED_VERSION;
         this.data.products = seeded.products;
         this.data.users = seeded.users;
         this.data.passwords = { ...this.data.passwords, ...seeded.passwords };
         this.data.sellers = seeded.sellers;
         this.data.coupons = seeded.coupons;
         this.save();
-        console.log(`[ShopSphere DB] Seed complete. Loaded ${this.data.products.length} products, ${this.data.users.length} users, ${this.data.sellers.length} sellers, ${this.data.coupons.length} coupons.`);
+        console.log(`[ShopSphere DB] Seed complete. Loaded ${this.data.products.length} products with category-pure images.`);
       } catch (err) {
         console.error("[ShopSphere DB] Seeding failed:", err);
       }
