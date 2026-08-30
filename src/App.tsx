@@ -25,10 +25,11 @@ import QuickViewModal from './components/QuickViewModal';
 import SearchAutocomplete from './components/SearchAutocomplete';
 import FloatingCart from './components/FloatingCart';
 import ToastContainer, { ToastItem } from './components/ToastContainer';
+import { getAllProducts, loadProductsUnified, loginUserUnified, registerUserUnified } from './services/clientStore';
 
 export default function App() {
-  // Global States
-  const [products, setProducts] = useState<Product[]>([]);
+  // Global States - initialized synchronously with 1010 products from master catalog
+  const [products, setProducts] = useState<Product[]>(() => getAllProducts());
   const [activeCategory, setActiveCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortParam, setSortParam] = useState('newest');
@@ -203,33 +204,18 @@ export default function App() {
     }
   };
 
-  // Sync Products list from backend
+  // Sync Products list from unified persistent store / backend
   const fetchProducts = async () => {
     try {
-      let url = `/api/products?sort=${sortParam}`;
-      if (activeCategory !== 'All') {
-        url += `&category=${encodeURIComponent(activeCategory)}`;
-      }
-      if (searchQuery.trim()) {
-        url += `&search=${encodeURIComponent(searchQuery)}`;
-      }
-
-      const resp = await fetch(url);
-      if (resp.ok) {
-        const data = await resp.json();
-        if (Array.isArray(data)) {
-          setProducts(data);
-        } else {
-          console.warn('Products response was not an array:', data);
-          setProducts([]);
-        }
-      } else {
-        console.error('Fetch products failed with status:', resp.status);
-        setProducts([]);
-      }
+      const data = await loadProductsUnified({
+        category: activeCategory,
+        search: searchQuery,
+        sort: sortParam
+      });
+      setProducts(data);
     } catch (e) {
-      console.error('Fetch products failed:', e);
-      setProducts([]);
+      console.error('Fetch products fallback applied:', e);
+      setProducts(getAllProducts());
     }
   };
 
@@ -279,7 +265,7 @@ export default function App() {
 
   // Quick seed logins for users convenience (Admin, Seller, Customer toggles)
   const handleFastLogin = async (role: 'CUSTOMER' | 'SELLER' | 'ADMIN') => {
-    let targetEmail = 'rejitha2503@gmail.com'; // Customer
+    let targetEmail = 'customer@shopsphere.com';
     let targetPassword = 'customer123';
 
     if (role === 'SELLER') {
@@ -291,18 +277,12 @@ export default function App() {
     }
 
     try {
-      const resp = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: targetEmail, password: targetPassword })
-      });
-
-      if (resp.ok) {
-        const data = await resp.json();
-        setCurrentUser(data.user);
+      const res = await loginUserUnified(targetEmail, targetPassword);
+      if (res.user) {
+        setCurrentUser(res.user);
         setCurrentRole(role);
-        if (data.token) {
-          localStorage.setItem('shopsphere_token', data.token);
+        if (res.token) {
+          localStorage.setItem('shopsphere_token', res.token);
         }
         
         // Auto navigate dashboard view
@@ -316,8 +296,7 @@ export default function App() {
 
         triggerToast('Profile Sync', `Logged into verified role: ${role}`, 'success');
       } else {
-        const err = await resp.json();
-        triggerToast('Fast Login error', err.error, 'info');
+        triggerToast('Fast Login error', res.error || 'Login failed', 'info');
       }
     } catch (err) {
       console.error(err);
@@ -328,36 +307,27 @@ export default function App() {
   const handleAuthSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      let resp;
+      let res;
       if (isRegisterMode) {
-        resp = await fetch('/api/auth/register', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, name, password, referredBy: referredByCode })
-        });
+        res = await registerUserUnified({ name, email, password, referredByCode });
       } else {
-        resp = await fetch('/api/auth/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password })
-        });
+        res = await loginUserUnified(email, password);
       }
 
-      const data = await resp.json();
-      if (resp.ok) {
-        setCurrentUser(isRegisterMode ? data.user : data.user);
-        setCurrentRole(isRegisterMode ? 'CUSTOMER' : data.user.role);
-        if (data.token) {
-          localStorage.setItem('shopsphere_token', data.token);
+      if (res.user) {
+        setCurrentUser(res.user);
+        setCurrentRole(isRegisterMode ? 'CUSTOMER' : res.user.role);
+        if (res.token) {
+          localStorage.setItem('shopsphere_token', res.token);
         }
-        triggerToast('Auth Verified', isRegisterMode ? 'Successful registration!' : `Welcome back ${data.user.name}!`, 'success');
+        triggerToast('Auth Verified', isRegisterMode ? 'Successful registration!' : `Welcome back ${res.user.name}!`, 'success');
         setIsAuthFormOpen(false);
         setPassword('');
         setEmail('');
         setName('');
         setReferredByCode('');
       } else {
-        triggerToast('Access Denied', data.error || 'Server error', 'info');
+        triggerToast('Access Denied', res.error || 'Server error', 'info');
       }
     } catch (err) {
       console.error(err);

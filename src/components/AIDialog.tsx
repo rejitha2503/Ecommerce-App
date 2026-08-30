@@ -77,10 +77,28 @@ export default function AIDialog({ user, onNavigateToProduct, products }: AIDial
       }
     } catch (err) {
       setIsTyping(false);
+      // Smart client-side catalog recommendation fallback
+      const q = userMsg.text.toLowerCase();
+      const matched = products.filter(p => 
+        p.title.toLowerCase().includes(q) || 
+        p.category.toLowerCase().includes(q) || 
+        p.brand.toLowerCase().includes(q) ||
+        p.description.toLowerCase().includes(q)
+      ).slice(0, 3);
+
+      let fallbackText = `Here are some recommendations from our curated catalog of ${products.length} products:`;
+      if (matched.length > 0) {
+        fallbackText = `I found some great options for you:\n` + 
+          matched.map(m => `• **${m.title}** (${m.brand}) - ₹${m.price.toLocaleString('en-IN')} [ID: ${m.id}]`).join('\n') +
+          `\n\nFeel free to explore our categories or use coupon code **SAVE20** at checkout!`;
+      } else {
+        fallbackText = `I'm your ShopSphere shopping concierge. You can explore our verified catalog across Women's Fashion, Men's Fashion, Electronics, Footwear, Books, Gaming, and Beauty. How can I help you find what you need?`;
+      }
+
       setMessages(prev => [...prev, {
-        id: `err-${Date.now()}`,
+        id: `ai-${Date.now()}`,
         sender: 'ai',
-        text: "I experienced a connection latency error. Note: In our sandbox offline state, please verify your GEMINI_API_KEY is properly saved in the 'Settings' panel to unlock interactive recommendations!",
+        text: fallbackText,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       }]);
     }

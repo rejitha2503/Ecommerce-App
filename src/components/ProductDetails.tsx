@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Star, ShieldAlert, Award, MessageSquareCode, Truck, RefreshCw, Layers } from 'lucide-react';
 import { Product, User } from '../types';
+import { submitProductReviewUnified } from '../services/clientStore';
 
 interface ProductDetailsProps {
   product: Product;
@@ -58,24 +59,18 @@ export default function ProductDetails({ product, user, onAddToCart, onAddToWish
 
     setIsSubmittingReview(true);
     try {
-      const resp = await fetch(`/api/products/${product.id}/review`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId: user.id,
-          userName: user.name,
-          rating: reviewRating,
-          comment: reviewComment
-        })
+      await submitProductReviewUnified(product.id, {
+        userId: user.id,
+        userName: user.name,
+        rating: reviewRating,
+        comment: reviewComment
       });
 
       setIsSubmittingReview(false);
-      if (resp.ok) {
-        onNotify('Review Posted', 'Thank you! Your feedback has been verified and aggregated.', 'success');
-        setReviewComment('');
-        setReviewRating(5);
-        onReloadProduct();
-      }
+      onNotify('Review Posted', 'Thank you! Your feedback has been verified and aggregated.', 'success');
+      setReviewComment('');
+      setReviewRating(5);
+      onReloadProduct();
     } catch (err) {
       setIsSubmittingReview(false);
       console.error(err);

@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Sparkles, Plus, Trash2, ShieldAlert, Award, Compass, Receipt, Copy, X, MapPin, Navigation, Map, ShieldCheck, Check, AlertCircle, RefreshCw } from 'lucide-react';
 import { User, Address, Order, Notification } from '../types';
+import { 
+  getUserOrdersUnified, 
+  getUserAddressesUnified, 
+  saveAddressUnified, 
+  deleteAddressUnified, 
+  updateOrderStatusUnified 
+} from '../services/clientStore';
 
 interface CustomerDashboardProps {
   user: User;
@@ -34,39 +41,19 @@ export default function CustomerDashboard({ user, onNotify, onRefreshUser }: Cus
 
   const fetchDashboardData = async () => {
     try {
-      const token = localStorage.getItem('shopsphere_token') || '';
-      const headersInit: HeadersInit = {
-        'Content-Type': 'application/json'
-      };
-      if (token) {
-        headersInit['Authorization'] = `Bearer ${token}`;
-      }
+      const dataOrders = await getUserOrdersUnified(user.id);
+      const sorted = [...dataOrders].sort((a: Order, b: Order) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      setOrders(sorted);
 
-      const respOrders = await fetch(`/api/orders/user/${user.id}`, { headers: headersInit });
-      const dataOrders = await respOrders.json();
-      if (Array.isArray(dataOrders)) {
-        const sorted = [...dataOrders].sort((a: Order, b: Order) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-        setOrders(sorted);
-      } else {
-        console.warn('Orders response is not an array:', dataOrders);
-        setOrders([]);
-      }
+      const dataAddrs = await getUserAddressesUnified(user.id);
+      setAddresses(dataAddrs);
 
-      const respAddrs = await fetch(`/api/addresses/${user.id}`, { headers: headersInit });
-      const dataAddrs = await respAddrs.json();
-      if (Array.isArray(dataAddrs)) {
-        setAddresses(dataAddrs);
-      } else {
-        console.warn('Addresses response is not an array:', dataAddrs);
-        setAddresses([]);
-      }
-
-      const respNotif = await fetch(`/api/notifications/${user.id}`);
-      const dataNotif = await respNotif.json();
-      if (Array.isArray(dataNotif)) {
-        setNotifications(dataNotif);
-      } else {
-        setNotifications([]);
+      const respNotif = await fetch(`/api/notifications/${user.id}`).catch(() => null);
+      if (respNotif && respNotif.ok) {
+        const dataNotif = await respNotif.json();
+        if (Array.isArray(dataNotif)) {
+          setNotifications(dataNotif);
+        }
       }
     } catch (e) {
       console.error(e);
@@ -85,47 +72,33 @@ export default function CustomerDashboard({ user, onNotify, onRefreshUser }: Cus
     }
 
     try {
-      const token = localStorage.getItem('shopsphere_token') || '';
-      const headersInit: HeadersInit = {
-        'Content-Type': 'application/json'
-      };
-      if (token) {
-        headersInit['Authorization'] = `Bearer ${token}`;
-      }
-
-      const resp = await fetch('/api/addresses', {
-        method: 'POST',
-        headers: headersInit,
-        body: JSON.stringify({
-          userId: user.id,
-          fullName,
-          phone,
-          street,
-          city,
-          state,
-          zipCode: zip,
-          lat,
-          lng,
-          formattedLocationName,
-          isDefault: addresses.length === 0
-        })
+      await saveAddressUnified({
+        userId: user.id,
+        fullName,
+        phone,
+        street,
+        city,
+        state,
+        zipCode: zip,
+        lat,
+        lng,
+        formattedLocationName,
+        isDefault: addresses.length === 0
       });
 
-      if (resp.ok) {
-        onNotify('Address Registered', 'New shipping address added in your book with verified geolocations.', 'success');
-        setIsAddingAddr(false);
-        setFullName('');
-        setPhone('');
-        setStreet('');
-        setCity('');
-        setState('');
-        setZip('');
-        setLat(undefined);
-        setLng(undefined);
-        setFormattedLocationName('');
-        setDeliveryAvailability('IDLE');
-        fetchDashboardData();
-      }
+      onNotify('Address Registered', 'New shipping address added in your book with verified geolocations.', 'success');
+      setIsAddingAddr(false);
+      setFullName('');
+      setPhone('');
+      setStreet('');
+      setCity('');
+      setState('');
+      setZip('');
+      setLat(undefined);
+      setLng(undefined);
+      setFormattedLocationName('');
+      setDeliveryAvailability('IDLE');
+      fetchDashboardData();
     } catch (err) {
       console.error(err);
     }
@@ -188,20 +161,9 @@ export default function CustomerDashboard({ user, onNotify, onRefreshUser }: Cus
 
   const handleDeleteAddress = async (id: string) => {
     try {
-      const token = localStorage.getItem('shopsphere_token') || '';
-      const headersInit: HeadersInit = {};
-      if (token) {
-        headersInit['Authorization'] = `Bearer ${token}`;
-      }
-
-      const resp = await fetch(`/api/addresses/${id}/${user.id}`, { 
-        method: 'DELETE',
-        headers: headersInit
-      });
-      if (resp.ok) {
-        onNotify('Address Removed', 'Removed address catalog successfully.', 'success');
-        fetchDashboardData();
-      }
+      await deleteAddressUnified(id, user.id);
+      onNotify('Address Removed', 'Removed address catalog successfully.', 'success');
+      fetchDashboardData();
     } catch (err) {
       console.error(err);
     }
@@ -209,16 +171,10 @@ export default function CustomerDashboard({ user, onNotify, onRefreshUser }: Cus
 
   const handleCancelOrder = async (orderId: string) => {
     try {
-      const resp = await fetch(`/api/orders/${orderId}/status`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: 'CANCELLED' })
-      });
-      if (resp.ok) {
-        onNotify('Order Cancelled', 'Your order was successfully terminated and a refund has been issued.', 'success');
-        fetchDashboardData();
-        onRefreshUser();
-      }
+      await updateOrderStatusUnified(orderId, 'CANCELLED');
+      onNotify('Order Cancelled', 'Your order was successfully terminated and a refund has been issued.', 'success');
+      fetchDashboardData();
+      onRefreshUser();
     } catch (err) {
       console.error(err);
     }
@@ -226,16 +182,10 @@ export default function CustomerDashboard({ user, onNotify, onRefreshUser }: Cus
 
   const handleReturnOrder = async (orderId: string) => {
     try {
-      const resp = await fetch(`/api/orders/${orderId}/status`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: 'RETURN_REQUESTED' })
-      });
-      if (resp.ok) {
-        onNotify('Return Process Initiated', 'Product pickup and refund verification scheduled.', 'success');
-        fetchDashboardData();
-        onRefreshUser();
-      }
+      await updateOrderStatusUnified(orderId, 'RETURN_REQUESTED');
+      onNotify('Return Process Initiated', 'Product pickup and refund verification scheduled.', 'success');
+      fetchDashboardData();
+      onRefreshUser();
     } catch (err) {
       console.error(err);
     }

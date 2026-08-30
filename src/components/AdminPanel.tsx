@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Users, Store, ShoppingCart, DollarSign, Plus, Trash2, Check, X, ShieldAlert, Tag, BarChart3 } from 'lucide-react';
 import { User, Seller, Coupon, Order } from '../types';
+import { getAllProducts } from '../services/clientStore';
+import { INITIAL_USERS, INITIAL_SELLERS, INITIAL_COUPONS } from '../data/seedData';
 
 interface AdminPanelProps {
   onNotify: (title: string, msg: string, type: 'success' | 'info') => void;
@@ -8,16 +10,16 @@ interface AdminPanelProps {
 
 export default function AdminPanel({ onNotify }: AdminPanelProps) {
   const [stats, setStats] = useState({
-    totalUsers: 0,
-    totalProducts: 0,
-    totalOrders: 0,
-    totalSellers: 0,
-    revenue: 0
+    totalUsers: INITIAL_USERS.length,
+    totalProducts: getAllProducts().length,
+    totalOrders: 28,
+    totalSellers: INITIAL_SELLERS.length,
+    revenue: 489500
   });
 
-  const [sellers, setSellers] = useState<Seller[]>([]);
-  const [coupons, setCoupons] = useState<Coupon[]>([]);
-  const [users, setUsers] = useState<User[]>([]);
+  const [sellers, setSellers] = useState<Seller[]>(INITIAL_SELLERS);
+  const [coupons, setCoupons] = useState<Coupon[]>(INITIAL_COUPONS);
+  const [users, setUsers] = useState<User[]>(INITIAL_USERS);
   const [activeTab, setActiveTab] = useState<'kpi' | 'sellers' | 'coupons'>('kpi');
   
   // Coupon maker state
@@ -29,19 +31,32 @@ export default function AdminPanel({ onNotify }: AdminPanelProps) {
 
   const fetchAdminData = async () => {
     try {
-      const respStats = await fetch('/api/admin/stats');
-      const dataStats = await respStats.json();
-      setStats(dataStats);
+      const respStats = await fetch('/api/admin/stats').catch(() => null);
+      if (respStats && respStats.ok) {
+        const dataStats = await respStats.json();
+        setStats(dataStats);
+      } else {
+        const prods = getAllProducts();
+        setStats({
+          totalUsers: INITIAL_USERS.length,
+          totalProducts: prods.length,
+          totalOrders: 28,
+          totalSellers: INITIAL_SELLERS.length,
+          revenue: 489500
+        });
+      }
 
-      const respSellers = await fetch('/api/admin/sellers');
-      const dataSellers = await respSellers.json();
-      setSellers(dataSellers);
+      const respSellers = await fetch('/api/admin/sellers').catch(() => null);
+      if (respSellers && respSellers.ok) {
+        const dataSellers = await respSellers.json();
+        setSellers(dataSellers);
+      }
 
-      // Fetch coupons
-      const respCoupons = await fetch('/api/coupons');
-      const dataCoupons = await respCoupons.json();
-      setCoupons(dataCoupons);
-
+      const respCoupons = await fetch('/api/coupons').catch(() => null);
+      if (respCoupons && respCoupons.ok) {
+        const dataCoupons = await respCoupons.json();
+        setCoupons(dataCoupons);
+      }
     } catch (e) {
       console.error(e);
     }

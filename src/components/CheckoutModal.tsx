@@ -20,6 +20,7 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { Address, Coupon, CartItem, Order } from '../types';
+import { getUserAddressesUnified, saveAddressUnified, applyCouponUnified, submitOrderUnified } from '../services/clientStore';
 
 interface CheckoutModalProps {
   userId: string;
@@ -81,19 +82,11 @@ export default function CheckoutModal({
   // Fetch registered user addresses
   const fetchAddresses = async () => {
     try {
-      const token = localStorage.getItem('shopsphere_token') || '';
-      const headersInit: Record<string, string> = {};
-      if (token) {
-        headersInit['Authorization'] = `Bearer ${token}`;
-      }
-      const resp = await fetch(`/api/addresses/${userId}`, { headers: headersInit });
-      if (resp.ok) {
-        const data = await resp.json();
-        setAddresses(data);
-        if (data.length > 0) {
-          const primary = data.find((a: Address) => a.isDefault) || data[0];
-          setSelectedAddrId(primary.id);
-        }
+      const data = await getUserAddressesUnified(userId);
+      setAddresses(data);
+      if (data.length > 0) {
+        const primary = data.find((a: Address) => a.isDefault) || data[0];
+        setSelectedAddrId(primary.id);
       }
     } catch (e) {
       console.error(e);
@@ -124,46 +117,32 @@ export default function CheckoutModal({
 
     setIsSubmitAddressLoading(true);
     try {
-      const token = localStorage.getItem('shopsphere_token') || '';
-      const headersInit: Record<string, string> = {
-        'Content-Type': 'application/json'
-      };
-      if (token) {
-        headersInit['Authorization'] = `Bearer ${token}`;
-      }
-
-      const resp = await fetch('/api/addresses', {
-        method: 'POST',
-        headers: headersInit,
-        body: JSON.stringify({
-          userId,
-          fullName: newFullName,
-          phone: newPhone,
-          street: newStreet,
-          city: newCity,
-          state: newState,
-          zipCode: newZipCode,
-          isDefault: addresses.length === 0
-        })
+      const saved = await saveAddressUnified({
+        userId,
+        fullName: newFullName,
+        phone: newPhone,
+        street: newStreet,
+        city: newCity,
+        state: newState,
+        zipCode: newZipCode,
+        isDefault: addresses.length === 0
       });
 
-      if (resp.ok) {
-        onNotify('Address Registered', 'Delivery point mapped into your profile database. Saved!', 'success');
-        
-        // Reset state
-        setNewFullName('');
-        setNewPhone('');
-        setNewStreet('');
-        setNewCity('');
-        setNewState('');
-        setNewZipCode('');
-        setShowAddressForm(false);
-        
-        // Reload addresses list
-        await fetchAddresses();
-      } else {
-        const errorData = await resp.json();
-        onNotify('Location Error', errorData.error || 'Server rejected coordinates.', 'error');
+      onNotify('Address Registered', 'Delivery point mapped into your profile database. Saved!', 'success');
+      
+      // Reset state
+      setNewFullName('');
+      setNewPhone('');
+      setNewStreet('');
+      setNewCity('');
+      setNewState('');
+      setNewZipCode('');
+      setShowAddressForm(false);
+      
+      // Reload addresses list
+      await fetchAddresses();
+      if (saved && saved.id) {
+        setSelectedAddrId(saved.id);
       }
     } catch (err: any) {
       onNotify('Database Connection Error', err.message || 'Location payload failure.', 'error');
@@ -178,66 +157,18 @@ export default function CheckoutModal({
     const normalizedCode = couponCode.trim().toUpperCase();
     if (!normalizedCode) return;
 
-    // Fast inline bypass coupons for optimal user experiences
-    if (normalizedCode === 'FIRST10') {
-      const reduction = Math.round(cartTotal * 0.10);
-      setDiscountAmt(reduction);
-      setAppliedCoupon({
-        id: 'cpn-first10',
-        code: 'FIRST10',
-        discountType: 'PERCENT',
-        value: 10,
-        minOrderValue: 0,
-        isActive: true,
-        description: 'Elite 10% Off Sign up voucher!'
-      });
-      onNotify('Coupon Applied', 'Voucher FIRST10 saved 10% off your checkout cart totals!', 'success');
-      return;
-    }
-
-    if (normalizedCode === 'SAVE20') {
-      const reduction = Math.round(cartTotal * 0.20);
-      setDiscountAmt(reduction);
-      setAppliedCoupon({
-        id: 'cpn-save20',
-        code: 'SAVE20',
-        discountType: 'PERCENT',
-        value: 20,
-        minOrderValue: 499,
-        isActive: true,
-        description: 'Premium Savings Voucher!'
-      });
-      onNotify('Coupon Applied', 'Coupon SAVE20 cut ₹' + reduction + ' from your overall subtotal!', 'success');
-      return;
-    }
-
     try {
-      const resp = await fetch('/api/coupons/apply', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code: normalizedCode, cartTotal })
-      });
-
-      if (resp.ok) {
-        const coupon: Coupon = await resp.json();
-        setAppliedCoupon(coupon);
-        
-        let reduction = 0;
-        if (coupon.discountType === 'PERCENT') {
-          reduction = Math.round(cartTotal * (coupon.value / 100));
-        } else {
-          reduction = coupon.value;
-        }
-        
-        setDiscountAmt(reduction);
-        onNotify('Coupon Applied', `Code "${coupon.code}" applied! Saved ₹${reduction}.`, 'success');
+      const res = await applyCouponUnified(normalizedCode, cartTotal);
+      if (res.valid && res.coupon) {
+        setAppliedCoupon(res.coupon);
+        setDiscountAmt(res.discountAmount);
+        onNotify('Coupon Applied', `Code "${res.coupon.code}" applied! Saved ₹${res.discountAmount}.`, 'success');
       } else {
-        const err = await resp.json();
-        onNotify('Coupon Invalid', err.error || 'Promotional coupon code is expired or invalid.', 'warn');
+        onNotify('Coupon Invalid', res.error || 'Promotional coupon code is expired or invalid.', 'warn');
       }
     } catch (err) {
       console.error(err);
-      onNotify('Validation Error', 'Underlying check failed.', 'error');
+      onNotify('Validation Error', 'Underlying coupon check failed.', 'error');
     }
   };
 
@@ -376,44 +307,26 @@ export default function CheckoutModal({
         selectedColor: item.selectedColor
       }));
 
-      const token = localStorage.getItem('shopsphere_token') || '';
-      const headersInit: Record<string, string> = {
-        'Content-Type': 'application/json'
-      };
-      if (token) {
-        headersInit['Authorization'] = `Bearer ${token}`;
-      }
-
-      const resp = await fetch('/api/orders', {
-        method: 'POST',
-        headers: headersInit,
-        body: JSON.stringify({
-          userId,
-          items: orderItems,
-          subtotal: cartTotal,
-          tax: gstAmount,
-          shippingFee,
-          discountAmount: discountAmt,
-          couponApplied: appliedCoupon?.code,
-          total: grandTotal,
-          shippingAddress: shipAddress,
-          paymentMethod
-        })
+      const orderData = await submitOrderUnified({
+        userId,
+        items: orderItems,
+        subtotal: cartTotal,
+        tax: gstAmount,
+        shippingFee,
+        discountAmount: discountAmt,
+        couponApplied: appliedCoupon?.code,
+        total: grandTotal,
+        shippingAddress: shipAddress,
+        paymentMethod
       });
 
-      const orderData = await resp.json();
       setIsProcessingPayment(false);
-
-      if (resp.ok) {
-        onNotify('Transaction Verified', 'Authorized. Your order has been placed successfully!', 'success');
-        onSuccess(orderData);
-      } else {
-        onNotify('Checkout Failure', orderData.error || 'Payment gateway coordinates rejected order.', 'error');
-      }
+      onNotify('Transaction Verified', 'Authorized. Your order has been placed successfully!', 'success');
+      onSuccess(orderData);
     } catch (err: any) {
       setIsProcessingPayment(false);
       console.error(err);
-      onNotify('Gateway Error', err.message || 'Underlying payment gateway pipe timed out.', 'error');
+      onNotify('Gateway Error', err.message || 'Payment processing encountered an error.', 'error');
     }
   };
 
